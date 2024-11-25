@@ -561,6 +561,30 @@ InstructionQueue::hasReadyInsts()
 void
 InstructionQueue::insert(const DynInstPtr &new_inst)
 {
+    // Add logic to print the cacheMiss field of every source register
+    // of all the instructions in the issue queue
+    for (ThreadID tid = 0; tid < numThreads; ++tid) {
+        for (auto inst_it = instList[tid].begin();
+             inst_it != instList[tid].end(); ++inst_it) {
+            DynInstPtr inst = *inst_it;
+
+            int num_src_regs = inst->numSrcRegs();
+
+            for (int src_reg_idx = 0;
+                 src_reg_idx < num_src_regs; ++src_reg_idx) {
+                PhysRegIdPtr src_reg = inst->renamedSrcIdx(src_reg_idx);
+
+                if (src_reg) {
+                    bool cache_miss = src_reg->cacheMiss;
+
+                    DPRINTF(IQ, "Instruction [sn:%llu], src reg idx %d,
+                            cacheMiss: %d\n",
+                            inst->seqNum, src_reg->index(), cache_miss);
+                }
+            }
+        }
+    }
+
     if (new_inst->isFloating()) {
         iqIOStats.fpInstQueueWrites++;
     } else if (new_inst->isVector()) {

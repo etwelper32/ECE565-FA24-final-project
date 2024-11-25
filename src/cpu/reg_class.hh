@@ -250,6 +250,8 @@ class PhysRegId : private RegId
     bool pinned;
 
   public:
+    bool cacheMiss;
+
     explicit PhysRegId() : RegId(InvalidRegClass, -1), flatIdx(-1),
                            numPinnedWritesToComplete(0)
     {}

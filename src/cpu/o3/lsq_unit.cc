@@ -1589,10 +1589,31 @@ LSQUnit::read(LSQRequest *request, ssize_t load_idx)
     // stores do).
     // @todo We should account for cache port contention
     // and arbitrate between loads and stores.
-
-    // if we the cache is not blocked, do cache access
     request->buildPackets();
     request->sendPacketToCache();
+
+    DPRINTF(LSQUnit, "After sendPacketToCache for inst [sn:%lli]
+            PC:%s, request->_packets.at(0)->cacheMiss: %d,
+            request->_packets.at(0)->id: %d\n",
+            load_inst->seqNum, load_inst->pcState(),
+            request->_packets.at(0)->cacheMiss,
+            request->_packets.at(0)->id);
+
+    if (request->_packets.at(0)->cacheMiss) {
+        DPRINTF(LSQUnit, "Number of dest reg: %d for inst [sn:%lli]\n",
+                load_inst->numDestRegs(), load_inst->seqNum);
+        // Some load inst are prefetch into memory inst
+        // that do not have a dest reg
+        if (load_inst->numDestRegs() > 0) {
+            for (int i = 0; i < load_inst->numDestRegs(); i++) {
+                PhysRegIdPtr phys_reg_id = load_inst->renamedDestIdx(i);
+                phys_reg_id->cacheMiss = true;
+                DPRINTF(LSQUnit, "  Destination Register Index = %d\n",
+                    phys_reg_id->index());
+            }
+        }
+    }
+
     if (!request->isSent())
         iewStage->blockMemInst(load_inst);
 

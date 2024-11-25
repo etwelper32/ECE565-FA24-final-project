@@ -1239,8 +1239,21 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
     Cycles tag_latency(0);
     blk = tags->accessBlock(pkt, tag_latency);
 
-    DPRINTF(Cache, "%s for %s %s\n", __func__, pkt->print(),
-            blk ? "hit " + blk->print() : "miss");
+    DPRINTF(Cache, "BaseCache: %s for %s %s,
+            pkt->cacheMiss: %d, pkt->id: %d\n",
+            __func__, pkt->print(),
+            blk ? "hit " + blk->print() : "miss ",
+            pkt->cacheMiss, pkt->id);
+
+    pkt->cacheMiss = blk ? false : true;
+
+    DPRINTF(Cache, "BaseCache: %s for %s %s\n", __func__, pkt->print(),
+            blk ? "hit " + blk->print() : "miss ");
+
+    DPRINTF(Cache, "BaseCache: %s for %s %s, pkt->cacheMiss: %s,
+            pkt->id: %d\n", __func__, pkt->print(),
+            blk ? "hit " + blk->print() : "miss ",
+            pkt->cacheMiss, pkt->id);
 
     if (pkt->req->isCacheMaintenance()) {
         // A cache maintenance operation is always forwarded to the
