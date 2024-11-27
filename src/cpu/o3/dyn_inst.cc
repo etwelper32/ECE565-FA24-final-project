@@ -387,6 +387,16 @@ DynInst::completeAcc(PacketPtr pkt)
 
     fault = staticInst->completeAcc(pkt, this, traceData);
 
+    if (fault == NoFault) {
+        for (int i = 0; i < numDestRegs(); i++) {
+            PhysRegIdPtr phys_reg_id = renamedDestIdx(i);
+            phys_reg_id->isWaiting = false;
+            DPRINTF(DynInst, "Destination Register Index = %d,"
+                    "isWaiting set to false\n",
+                    phys_reg_id->index());
+        }
+    }
+
     thread->noSquashFromTC = no_squash_from_TC;
 
     return fault;

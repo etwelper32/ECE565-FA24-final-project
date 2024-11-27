@@ -1592,9 +1592,9 @@ LSQUnit::read(LSQRequest *request, ssize_t load_idx)
     request->buildPackets();
     request->sendPacketToCache();
 
-    DPRINTF(LSQUnit, "After sendPacketToCache for inst [sn:%lli]
-            PC:%s, request->_packets.at(0)->cacheMiss: %d,
-            request->_packets.at(0)->id: %d\n",
+    DPRINTF(LSQUnit, "After sendPacketToCache for inst [sn:%lli] "
+            "PC:%s, request->_packets.at(0)->cacheMiss: %d, "
+            "request->_packets.at(0)->id: %d\n",
             load_inst->seqNum, load_inst->pcState(),
             request->_packets.at(0)->cacheMiss,
             request->_packets.at(0)->id);
@@ -1607,7 +1607,7 @@ LSQUnit::read(LSQRequest *request, ssize_t load_idx)
         if (load_inst->numDestRegs() > 0) {
             for (int i = 0; i < load_inst->numDestRegs(); i++) {
                 PhysRegIdPtr phys_reg_id = load_inst->renamedDestIdx(i);
-                phys_reg_id->cacheMiss = true;
+                phys_reg_id->isWaiting = true;
                 DPRINTF(LSQUnit, "  Destination Register Index = %d\n",
                     phys_reg_id->index());
             }

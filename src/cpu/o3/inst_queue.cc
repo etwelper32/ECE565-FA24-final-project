@@ -575,11 +575,14 @@ InstructionQueue::insert(const DynInstPtr &new_inst)
                 PhysRegIdPtr src_reg = inst->renamedSrcIdx(src_reg_idx);
 
                 if (src_reg) {
-                    bool cache_miss = src_reg->cacheMiss;
-
-                    DPRINTF(IQ, "Instruction [sn:%llu], src reg idx %d,
-                            cacheMiss: %d\n",
-                            inst->seqNum, src_reg->index(), cache_miss);
+                    if (src_reg->isWaiting) {
+                        DPRINTF(IQ, "Instruction [sn:%llu],"
+                                    "src reg idx %d,"
+                                    "isWaiting: %d\n",
+                                    inst->seqNum,
+                                    src_reg->index(),
+                                    src_reg->isWaiting);
+                    }
                 }
             }
         }
