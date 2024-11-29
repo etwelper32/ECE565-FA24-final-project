@@ -285,8 +285,6 @@ class InstructionQueue
 
     /** Debug function to print all instructions. */
     void printInsts();
-	
-	DependencyGraph<DynInstPtr> dependGraph;
 
   private:
     /** Does the actual squashing. */
@@ -416,7 +414,7 @@ class InstructionQueue
      */
     void moveToYoungerInst(ListOrderIt age_order_it);
 
-    
+    DependencyGraph<DynInstPtr> dependGraph;
 
     //////////////////////////////////////
     // Various parameters

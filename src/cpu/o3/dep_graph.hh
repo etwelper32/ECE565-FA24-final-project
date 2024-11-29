@@ -92,6 +92,11 @@ class DependencyGraph
     /** Clears all of the linked lists. */
     void reset();
 
+	/** Definition to obtain node in dependence graph */
+	DepEntry* getDepEntry(RegIndex idx) {
+        return &dependGraph[idx];
+    }
+
     /** Inserts an instruction to be dependent on the given index. */
     void insert(RegIndex idx, const DynInstPtr &new_inst);
 

@@ -723,9 +723,9 @@ InstructionQueue::AddToWIB()
             bool needsToWait = false;
 
             for (int src_idx = 0; src_idx < inst->numSrcRegs(); ++src_idx) {
-                PhysRegIdPtr src_reg = inst->renamedSrcIdx(src_idx);
+                PhysRegIdPtr src_reg = inst->srcRegIdx(src_idx);
 
-                if (src_reg->isWaiting) {
+                if (src_reg->isWaiting()) {
                     needsToWait = true;
                     break;
                 }
@@ -748,8 +748,7 @@ InstructionQueue::AddToWIB()
                     PhysRegIdPtr dest_reg = inst->renamedDestIdx(dest_reg_idx);
 
                     // Traverse the dependency chain but do not modify the graph
-                    typename DependencyGraph<DynInstPtr>::DepEntry *depEntry = dependGraph.getDepEntry(dest_reg->flatIndex())->next;
-
+                    DepEntry *depEntry = dependGraph[dest_reg->flatIndex()].next;
                     while (depEntry) {
                         // Check if the WIB is full before adding dependents
                         if (WIB[tid].size() >= MaxWIBEntries) {
@@ -1215,9 +1214,9 @@ InstructionQueue::removeFromWIB(const DynInstPtr &dep_inst)
             // Check if the instruction is waiting
             bool needsToWait = false;
             for (int src_idx = 0; src_idx < wib_inst->numSrcRegs(); ++src_idx) {
-                PhysRegIdPtr src_reg = wib_inst->renamedSrcIdx(src_idx);
+                PhysRegIdPtr src_reg = wib_inst->srcRegIdx(src_idx);
 
-                if (src_reg->isWaiting) {
+                if (src_reg->isWaiting()) {
                     needsToWait = true;
                     break;
                 }
