@@ -710,7 +710,7 @@ InstructionQueue::AddToWIB()
 {
     for (ThreadID tid = 0; tid < MaxThreads; ++tid) {
         // Iterate over instructions in the instruction list
-        for (auto it = WIB[tid].begin(); it != WIB[tid].end(); ) {
+        for (auto it = instList[tid].begin(); it != instList[tid].end(); ) {
             // Check if the WIB is full before processing any instruction
             if (WIB[tid].size() >= MaxWIBEntries) {
                 DPRINTF(IQ, "WIB is full for thread %d. Skipping additions.\n", tid);
@@ -734,7 +734,7 @@ InstructionQueue::AddToWIB()
             if (needsToWait) {
                 // Add instruction to WIB and remove it from instList
                 WIB[tid].push_back(inst);
-                it = WIB[tid].erase(it);
+                it = instList[tid].erase(it);
 
                 DPRINTF(IQ, "Moved instruction [sn:%llu] PC %s to WIB.\n",
                         inst->seqNum, inst->pcState());
@@ -760,11 +760,11 @@ InstructionQueue::AddToWIB()
                         DynInstPtr dep_inst = depEntry->inst;
 
                         // Look for dependent instruction in instList
-                        auto dep_it = std::find(WIB[tid].begin(), WIB[tid].end(), dep_inst);
-                        if (dep_it != WIB[tid].end()) {
+                        auto dep_it = std::find(instList[tid].begin(), instList[tid].end(), dep_inst);
+                        if (dep_it != instList[tid].end()) {
                             // Remove dependent from instList and add to WIB
                             WIB[tid].push_back(dep_inst);
-                            WIB[tid].erase(dep_it);
+                            instList[tid].erase(dep_it);
 
                             DPRINTF(IQ, "Moved dependent instruction [sn:%llu] "
                                     "PC %s to WIB.\n",
@@ -1567,7 +1567,6 @@ InstructionQueue::WIBSquash(ThreadID tid)
 
                     // Only remove it from the dependency graph if it
                     // was placed there in the first place.
-
                     // Instead of doing a linked list traversal, we
                     // can just remove these squashed instructions
                     // either at issue time, or when the register is
