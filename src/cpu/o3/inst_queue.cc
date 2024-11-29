@@ -1533,7 +1533,7 @@ InstructionQueue::WIBSquash(ThreadID tid)
         // Only handle the instruction if it actually is in the IQ and
         // hasn't already been squashed in the IQ.
         if (squashed_inst->threadNumber != tid ||
-            squashed_inst->isSquashedInIQ()) {
+            squashed_inst->isSquashedInWIB()) {
             --squash_it;
             continue;
         }
@@ -1609,8 +1609,8 @@ InstructionQueue::WIBSquash(ThreadID tid)
 
             // Might want to also clear out the head of the dependency graph.
 
-            // Mark it as squashed within the IQ.
-            squashed_inst->setSquashedInIQ();
+            // Mark it as squashed within the WIB.
+            squashed_inst->setSquashedInWIB();
 
             // @todo: Remove this hack where several statuses are set so the
             // inst will flow through the rest of the pipeline.

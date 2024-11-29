@@ -168,6 +168,7 @@ class DynInst : public ExecContext, public RefCounted
                                  /// instructions ahead of it
         SerializeAfter,          /// Needs to serialize instructions behind it
         SerializeHandled,        /// Serialization has been handled
+        SquashedInWIB,           /// Instruction is squashed in the WIB
         NumStatus
     };
 
@@ -805,7 +806,11 @@ class DynInst : public ExecContext, public RefCounted
     /** Returns whether or not this instruction is squashed in the IQ. */
     bool isSquashedInIQ() const { return status[SquashedInIQ]; }
 
+    /** Sets this instruction as squashed in the IQ. */
+    void setSquashedInWIB() { status.set(SquashedInWIB); status.set(Squashed);}
 
+    /** Returns whether or not this instruction is squashed in the IQ. */
+    bool isSquashedInWIB() const { return status[SquashedInWIB]; }
     //Load / Store Queue Functions
     //-----------------------
     /** Sets this instruction as a entry the LSQ. */
